@@ -7,7 +7,7 @@ from sklearn.linear_model import LinearRegression
 # -- SETTINGS --
 st.set_page_config(page_title="Yield Textile Calculator", layout="wide")
 
-# -- CUSTOM CSS (PREMIUM INDUSTRIAL DARK + RESPONSIVE + ANTI-BUG MODE) --
+# -- CUSTOM CSS (PREMIUM INDUSTRIAL DARK + RESPONSIVE + BUG FIXES) --
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@800&display=swap');
@@ -19,7 +19,7 @@ st.markdown("""
     .stDeployButton {display: none !important;}
     #MainMenu {visibility: hidden !important;}
 
-    /* 2. Kunci Mati Background ke Dark Mode (Anti-Bug Mode Terang) */
+    /* 2. Kunci Mati Background ke Dark Mode */
     .stApp, [data-testid="stAppViewContainer"] {
         background-color: #0E0E0E !important;
         background-image: linear-gradient(rgba(14, 14, 14, 0.88), rgba(14, 14, 14, 0.95)), url('https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?q=80&w=1000&auto=format&fit=crop') !important;
@@ -28,11 +28,14 @@ st.markdown("""
         background-attachment: fixed !important;
     }
     
-    /* 3. Kunci Mati Warna Teks (Anti-Tenggelam) */
-    h1, h2, h3, h4, h5, h6, label, p, span, div, .st-emotion-cache-10trblm {
+    /* 3. Teks Utama (Hilangkan target 'div' global biar dropdown aman) */
+    h1, h2, h3, h4, h5, h6, label, p, .st-emotion-cache-10trblm {
         color: #E0E0E0 !important;
         font-family: 'Inter', sans-serif !important;
         text-shadow: 1px 1px 3px rgba(0,0,0,0.8) !important; 
+    }
+    span, div {
+        font-family: 'Inter', sans-serif !important;
     }
 
     .brand-title {
@@ -54,7 +57,27 @@ st.markdown("""
         -webkit-text-fill-color: #FFFFFF !important; 
     }
 
-    /* 5. Desain Kartu & Elemen Lainnya */
+    /* === 5. FIX BUG KOTAK PILIHAN DROPDOWN (YANG BURAM TADI) === */
+    div[data-baseweb="popover"] > div {
+        background-color: #1A1A1A !important;
+        border: 1px solid #444444 !important;
+    }
+    ul[role="listbox"] {
+        background-color: #1A1A1A !important;
+    }
+    ul[role="listbox"] li {
+        background-color: #1A1A1A !important;
+        color: #FFFFFF !important;
+    }
+    ul[role="listbox"] li:hover {
+        background-color: #333333 !important;
+    }
+    ul[role="listbox"] span {
+        color: #FFFFFF !important;
+        text-shadow: none !important; /* Ini yang bikin buram, kita hilangkan shadow-nya */
+    }
+
+    /* 6. Desain Kartu & Elemen Lainnya */
     .solid-card {
         background-color: #1A1A1A !important; border: 1px solid #333333 !important; border-radius: 6px;
         padding: 24px; margin-bottom: 20px;
@@ -298,7 +321,6 @@ if st.button("Calculate", use_container_width=True):
             size_data[kolom] = adj
         table_html = pd.DataFrame(size_data).to_html(index=False, classes="custom-table")
         
-        # INI BAGIAN YANG DITAMBAH OVERFLOW-X: AUTO
         st.markdown(f'<div class="solid-card" style="padding:0; overflow:hidden;"><div style="padding:24px 24px 10px 24px;"><h4 class="card-header" style="border:none;">Size Chart Reference</h4></div><div style="overflow-x:auto;">{table_html}</div></div>'.replace('\n', ''), unsafe_allow_html=True)
 
     kain_cards = ""
