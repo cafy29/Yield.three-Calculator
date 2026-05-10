@@ -209,7 +209,6 @@ with cc2:
 with cc3:
     jumlah_baju = st.number_input("Kuantitas Produksi:", 1, 10000, 1)
 
-# FITUR LENGAN YANG SEMPAT HILANG UDAH BALIK DI SINI
 lengan_opt = 0
 if jenis not in ["Celana", "Rok"]:
     tampilan_lengan = st.radio("Sleeve / Tipe Lengan:", ["Pendek", "Panjang"], horizontal=True)
@@ -253,7 +252,10 @@ if st.button("Calculate", use_container_width=True):
         biaya = k['harga_kg'] * total_kg_req
         stok_color = "#81C784" if k['stok_kg'] >= 50 else "#FFB74D"
         stok_status = "Optimal" if k['stok_kg'] >= 50 else "⚠️ Low Stock"
-        pesan = urllib.parse.quote(f"Request PO: {k['nama']} ({total_kg_req:.2f} kg)")
+        
+        # PERUBAHAN TEKS WA DAN NAMA TOMBOL ADA DI SINI
+        pesan_wa = f"Halo, saya ingin order material bahan *{k['nama']}* untuk kebutuhan produksi. Estimasi kebutuhan volume adalah *{total_kg_req:.2f} kg*. Mohon konfirmasi ketersediaan stok dan rincian tagihannya. Terima kasih."
+        pesan_encode = urllib.parse.quote(pesan_wa)
         
         kain_cards += f"""
         <div class="inventory-card">
@@ -268,8 +270,8 @@ if st.button("Calculate", use_container_width=True):
             <div class="card-right" style="text-align:right;">
                 <div style="font-size:0.7rem; color:#888; text-transform:uppercase;">Estimated Cost</div>
                 <div style="font-size:1.3rem; font-weight:700; color:#FFF;">Rp {int(biaya):,}</div>
-                <a href="https://wa.me/6285318543702?text={pesan}" target="_blank" style="text-decoration:none;">
-                    <div class="wa-btn">Request Material</div>
+                <a href="https://wa.me/6285318543702?text={pesan_encode}" target="_blank" style="text-decoration:none;">
+                    <div class="wa-btn">Order Material</div>
                 </a>
             </div>
         </div>"""
