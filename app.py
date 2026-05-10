@@ -7,7 +7,7 @@ from sklearn.linear_model import LinearRegression
 # -- SETTINGS --
 st.set_page_config(page_title="Yield Textile Calculator", layout="wide")
 
-# -- CUSTOM CSS (PREMIUM INDUSTRIAL DARK) --
+# -- CUSTOM CSS (PREMIUM INDUSTRIAL DARK + RESPONSIVE) --
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@800&display=swap');
@@ -16,7 +16,7 @@ st.markdown("""
     header {visibility: hidden !important;}
     [data-testid="stToolbar"] {visibility: hidden !important;}
 
-    /* 1. Base Theme dengan Gambar Kain + Kaca Film Gelap */
+    /* Base Theme */
     [data-testid="stAppViewContainer"] {
         background-image: linear-gradient(rgba(14, 14, 14, 0.88), rgba(14, 14, 14, 0.95)), url('https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?q=80&w=1000&auto=format&fit=crop') !important;
         background-size: cover !important;
@@ -24,7 +24,7 @@ st.markdown("""
         background-attachment: fixed !important;
     }
     
-    /* 2. Tambahan Text-Shadow Biar Tulisan Nyala dan Gak Tenggelam */
+    /* Text Shadow */
     h1, h2, h3, h4, h5, h6, label, p, span, .st-emotion-cache-10trblm {
         color: #E0E0E0 !important;
         font-family: 'Inter', sans-serif !important;
@@ -33,12 +33,12 @@ st.markdown("""
 
     .brand-title {
         font-family: 'Montserrat', sans-serif !important;
-        font-size: 2.8rem; font-weight: 800; color: #FFFFFF !important;
+        font-size: 2.5rem; font-weight: 800; color: #FFFFFF !important;
         margin-bottom: 5px; letter-spacing: -1px; text-transform: uppercase;
-        text-shadow: 2px 2px 5px rgba(0,0,0,0.9) !important; /* Bayangan ekstra buat judul utama */
+        text-shadow: 2px 2px 5px rgba(0,0,0,0.9) !important; 
     }
     
-    .brand-subtitle { color: #888888 !important; font-size: 1rem; margin-bottom: 30px; }
+    .brand-subtitle { color: #888888 !important; font-size: 0.9rem; margin-bottom: 30px; }
 
     .solid-card {
         background-color: #1A1A1A; border: 1px solid #333333; border-radius: 6px;
@@ -61,24 +61,22 @@ st.markdown("""
         border-radius: 4px !important; padding: 12px 24px !important; font-weight: 500; width: 100% !important;
     }
     
-    .custom-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    .custom-table th { background-color: #222222; color: #A0A0A0; padding: 12px; text-align: left; border-bottom: 1px solid #444444; }
-    .custom-table td { padding: 12px; border-bottom: 1px solid #333333; }
+    .custom-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .custom-table th { background-color: #222222; color: #A0A0A0; padding: 10px; text-align: left; border-bottom: 1px solid #444444; }
+    .custom-table td { padding: 10px; border-bottom: 1px solid #333333; }
 
     div[data-baseweb="input"], [data-baseweb="select"] { 
         background-color: #1A1A1A !important; border: 1px solid #444444 !important;
     }
     
-    .wa-link { text-decoration: none !important; }
+    .wa-link { text-decoration: none !important; display: block; width: 100%; }
     
-    /* Update Tombol ke Gaya Enterprise Outline */
     .wa-btn {
         display: inline-flex; align-items: center; justify-content: center;
         background-color: transparent !important; 
         color: #FFFFFF !important; 
-        padding: 8px 20px;
+        padding: 8px 15px;
         border-radius: 4px; 
-        text-decoration: none !important; 
         font-size: 0.75rem;
         font-weight: 700; 
         border: 1px solid #2E7D32 !important; 
@@ -86,6 +84,7 @@ st.markdown("""
         letter-spacing: 1px;
         transition: 0.3s ease;
         text-transform: uppercase;
+        box-sizing: border-box;
     }
     .wa-btn:hover {
         background-color: #2E7D32 !important;
@@ -93,14 +92,49 @@ st.markdown("""
         color: #FFFFFF !important;
     }
 
-    /* Badge Label Status Stok */
     .status-badge {
-        padding: 2px 8px;
+        padding: 2px 6px;
         border-radius: 4px;
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         font-weight: 700;
         text-transform: uppercase;
-        margin-left: 10px;
+        margin-left: 8px;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    /* KELAS KHUSUS INVENTORY CARD */
+    .inventory-card {
+        border: 1px solid #333; 
+        padding: 20px; 
+        border-radius: 8px; 
+        margin-bottom: 15px; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        background: rgba(25, 25, 25, 0.6); 
+        backdrop-filter: blur(10px);
+    }
+    .card-left { flex: 1; padding-right: 15px; }
+    .card-right { text-align: right; min-width: 130px; }
+
+    /* RESPONSIVE UNTUK HP */
+    @media (max-width: 768px) {
+        .brand-title { font-size: 2rem; }
+        .inventory-card {
+            flex-direction: column; 
+            align-items: flex-start; 
+            padding: 15px;
+        }
+        .card-left { padding-right: 0; width: 100%; }
+        .card-right { 
+            text-align: left; 
+            width: 100%; 
+            margin-top: 15px; 
+            padding-top: 15px; 
+            border-top: 1px solid #444; 
+        }
+        .wa-btn { width: 100%; padding: 12px; margin-top: 12px; }
     }
     </style>
 """, unsafe_allow_html=True)
@@ -273,21 +307,20 @@ if st.button("Calculate", use_container_width=True):
         pesan = urllib.parse.quote(f"Halo, saya ingin membuat Request Material (PO) untuk bahan *{k['nama']}*. Kebutuhan produksi: *{round(total_kg_req, 2)} kg*. Mohon konfirmasi ketersediaan.")
         
         kain_cards += f"""
-        <div style="border:1px solid #333; padding:20px; border-radius:8px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; background:rgba(25, 25, 25, 0.6); backdrop-filter: blur(10px);">
-            <div>
-                <div style="font-weight:700; color:#FFFFFF; font-size: 1.1rem; letter-spacing: 0.5px; text-transform: uppercase;">{k['nama']}</div>
-                <div style="color:#AAAAAA; font-size:0.85rem; margin-top: 8px; display:flex; align-items:center;">
-                    Available Volume: 
-                    <strong style="color:{stok_color}; margin-left:5px; font-size:1rem;">{k['stok_kg']:.2f} kg</strong>
+        <div class="inventory-card">
+            <div class="card-left">
+                <div style="font-weight:700; color:#FFFFFF; font-size: 1rem; letter-spacing: 0.5px; text-transform: uppercase;">{k['nama']}</div>
+                <div style="color:#AAAAAA; font-size:0.8rem; margin-top: 8px;">
+                    Available Volume: <strong style="color:{stok_color}; margin-left:3px; font-size:0.9rem;">{k['stok_kg']:.2f} kg</strong>
                     <span class="status-badge" style="background:{badge_bg}; color:{stok_color}; border: 1px solid {stok_color};">
                         {stok_status}
                     </span>
                 </div>
-                <div style="color:#777; font-size:0.8rem; margin-top:6px; font-style:italic;">{k['karakter']}</div>
+                <div style="color:#777; font-size:0.75rem; margin-top:6px; font-style:italic;">{k['karakter']}</div>
             </div>
-            <div style="text-align:right;">
-                <div style="color:#888; font-size:0.75rem; text-transform:uppercase; margin-bottom:2px;">Estimated Cost</div>
-                <div style="color:#FFFFFF; font-weight:600; font-size: 1.4rem; letter-spacing: -0.5px;">Rp {int(biaya):,}</div>
+            <div class="card-right">
+                <div style="color:#888; font-size:0.7rem; text-transform:uppercase; margin-bottom:4px;">Estimated Cost</div>
+                <div style="color:#FFFFFF; font-weight:600; font-size: 1.25rem; letter-spacing: -0.5px;">Rp {int(biaya):,}</div>
                 <a href="https://wa.me/6285318543702?text={pesan}" target="_blank" class="wa-link">
                     <div class="wa-btn">Request Material</div>
                 </a>
