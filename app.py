@@ -10,9 +10,11 @@ st.set_page_config(page_title="Yield Textile Calculator", layout="wide")
 # -- CUSTOM CSS (PREMIUM INDUSTRIAL DARK) --
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@800&display=swap');/* Sembunyikan Header dan Menu Default Streamlit */
-header {visibility: hidden !important;}
-[data-testid="stToolbar"] {visibility: hidden !important;}
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@800&display=swap');
+
+    /* Sembunyikan Header dan Menu Default Streamlit */
+    header {visibility: hidden !important;}
+    [data-testid="stToolbar"] {visibility: hidden !important;}
 
     /* 1. Base Theme dengan Gambar Kain + Kaca Film Gelap */
     [data-testid="stAppViewContainer"] {
@@ -23,7 +25,7 @@ header {visibility: hidden !important;}
     }
     
     /* 2. Tambahan Text-Shadow Biar Tulisan Nyala dan Gak Tenggelam */
-    h1, h2, h3, h4, h5, h6, label, p, span {
+    h1, h2, h3, h4, h5, h6, label, p, span, .st-emotion-cache-10trblm {
         color: #E0E0E0 !important;
         font-family: 'Inter', sans-serif !important;
         text-shadow: 1px 1px 3px rgba(0,0,0,0.8) !important; 
@@ -35,16 +37,7 @@ header {visibility: hidden !important;}
         margin-bottom: 5px; letter-spacing: -1px; text-transform: uppercase;
         text-shadow: 2px 2px 5px rgba(0,0,0,0.9) !important; /* Bayangan ekstra buat judul utama */
     }
-    }
-    h1, h2, h3, h4, h5, h6, label, p, div, span, .st-emotion-cache-10trblm {
-        color: #E0E0E0 !important;
-        font-family: 'Inter', sans-serif !important;
-    }
-    .brand-title {
-        font-family: 'Montserrat', sans-serif !important;
-        font-size: 2.8rem; font-weight: 800; color: #FFFFFF !important;
-        margin-bottom: 5px; letter-spacing: -1px; text-transform: uppercase;
-    }
+    
     .brand-subtitle { color: #888888 !important; font-size: 1rem; margin-bottom: 30px; }
 
     .solid-card {
@@ -77,20 +70,44 @@ header {visibility: hidden !important;}
     }
     
     .wa-link { text-decoration: none !important; }
+    
+    /* Update Tombol ke Gaya Enterprise Outline */
     .wa-btn {
         display: inline-flex; align-items: center; justify-content: center;
-        background-color: #25D366; color: #FFFFFF !important; padding: 10px 20px;
-        border-radius: 4px; text-decoration: none !important; font-size: 0.9rem;
-        font-weight: 600; transition: background 0.2s; border: none; margin-top: 10px;
+        background-color: transparent !important; 
+        color: #FFFFFF !important; 
+        padding: 8px 20px;
+        border-radius: 4px; 
+        text-decoration: none !important; 
+        font-size: 0.75rem;
+        font-weight: 700; 
+        border: 1px solid #2E7D32 !important; 
+        margin-top: 10px;
+        letter-spacing: 1px;
+        transition: 0.3s ease;
+        text-transform: uppercase;
     }
-    .wa-btn:hover { background-color: #1EBE53; }
+    .wa-btn:hover {
+        background-color: #2E7D32 !important;
+        border-color: #2E7D32 !important;
+        color: #FFFFFF !important;
+    }
+
+    /* Badge Label Status Stok */
+    .status-badge {
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-left: 10px;
+    }
     </style>
 """, unsafe_allow_html=True)
 
 # ==========================================
 # 1. DATABASE PRODUKSI (Stok dalam KG)
 # ==========================================
-# Konversi standar: 1 Kg Cotton Combed 24s ~ 2.4 - 3 Meter (tergantung setting mesin)
 KG_TO_METER = 2.8 
 
 DB_PRODUK_DEWASA = {
@@ -242,21 +259,39 @@ if st.button("Calculate", use_container_width=True):
     kain_cards = ""
     for k in DB_AKTIF[jenis]["rekomendasi_kain"]:
         biaya = k['harga_kg'] * total_kg_req
-        stok_color = "#12B76A" if k['stok_kg'] >= total_kg_req else "#F04438"
-        pesan = urllib.parse.quote(f"Halo, saya mau pesan bahan *{k['nama']}* untuk produksi *{jenis}* ({target_pasar}). Berat kebutuhan *{round(total_kg_req, 2)} kg*. Apakah stok ready?")
+        
+        # LOGIC ENTERPRISE STOK
+        if k['stok_kg'] >= 50:
+            stok_color = "#81C784"
+            stok_status = "Optimal"
+            badge_bg = "rgba(129, 199, 132, 0.15)"
+        else:
+            stok_color = "#FFB74D"
+            stok_status = "⚠️ Low Stock"
+            badge_bg = "rgba(255, 183, 77, 0.15)"
+            
+        pesan = urllib.parse.quote(f"Halo, saya ingin membuat Request Material (PO) untuk bahan *{k['nama']}*. Kebutuhan produksi: *{round(total_kg_req, 2)} kg*. Mohon konfirmasi ketersediaan.")
         
         kain_cards += f"""
-        <div style="border:1px solid #333; padding:16px; border-radius:4px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; background:#151515;">
+        <div style="border:1px solid #333; padding:20px; border-radius:8px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; background:rgba(25, 25, 25, 0.6); backdrop-filter: blur(10px);">
             <div>
-                <div style="font-weight:600; color:#FFF; font-size: 1.05rem;">{k['nama']}</div>
-                <div style="color:#888; font-size:0.85rem; margin-top: 4px;">Stok: <strong style="color:{stok_color};">{k['stok_kg']:.2f} kg</strong></div>
+                <div style="font-weight:700; color:#FFFFFF; font-size: 1.1rem; letter-spacing: 0.5px; text-transform: uppercase;">{k['nama']}</div>
+                <div style="color:#AAAAAA; font-size:0.85rem; margin-top: 8px; display:flex; align-items:center;">
+                    Available Volume: 
+                    <strong style="color:{stok_color}; margin-left:5px; font-size:1rem;">{k['stok_kg']:.2f} kg</strong>
+                    <span class="status-badge" style="background:{badge_bg}; color:{stok_color}; border: 1px solid {stok_color};">
+                        {stok_status}
+                    </span>
+                </div>
+                <div style="color:#777; font-size:0.8rem; margin-top:6px; font-style:italic;">{k['karakter']}</div>
             </div>
             <div style="text-align:right;">
-                <div style="color:#FFF; font-weight:600; font-size: 1.2rem;">Rp {int(biaya):,}</div>
+                <div style="color:#888; font-size:0.75rem; text-transform:uppercase; margin-bottom:2px;">Estimated Cost</div>
+                <div style="color:#FFFFFF; font-weight:600; font-size: 1.4rem; letter-spacing: -0.5px;">Rp {int(biaya):,}</div>
                 <a href="https://wa.me/6285318543702?text={pesan}" target="_blank" class="wa-link">
-                    <div class="wa-btn">Order Bahan</div>
+                    <div class="wa-btn">Request Material</div>
                 </a>
             </div>
         </div>
         """
-    st.markdown(f'<div class="solid-card"><h4 class="card-header">Ketersediaan Stok & Costing</h4>{kain_cards}</div>'.replace('\n', ''), unsafe_allow_html=True)
+    st.markdown(f'<div class="solid-card" style="background:transparent; border:none; padding:0;"><h4 class="card-header" style="margin-bottom:25px;">Inventory & Procurement Analysis</h4>{kain_cards}</div>'.replace('\n', ''), unsafe_allow_html=True)
