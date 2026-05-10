@@ -28,7 +28,7 @@ st.markdown("""
         background-attachment: fixed !important;
     }
     
-    /* 3. Teks Utama (Hilangkan target 'div' global biar dropdown aman) */
+    /* 3. Teks Utama */
     h1, h2, h3, h4, h5, h6, label, p, .st-emotion-cache-10trblm {
         color: #E0E0E0 !important;
         font-family: 'Inter', sans-serif !important;
@@ -57,7 +57,7 @@ st.markdown("""
         -webkit-text-fill-color: #FFFFFF !important; 
     }
 
-    /* === 5. FIX BUG KOTAK PILIHAN DROPDOWN (YANG BURAM TADI) === */
+    /* 5. FIX BUG KOTAK PILIHAN DROPDOWN */
     div[data-baseweb="popover"] > div {
         background-color: #1A1A1A !important;
         border: 1px solid #444444 !important;
@@ -74,7 +74,7 @@ st.markdown("""
     }
     ul[role="listbox"] span {
         color: #FFFFFF !important;
-        text-shadow: none !important; /* Ini yang bikin buram, kita hilangkan shadow-nya */
+        text-shadow: none !important;
     }
 
     /* 6. Desain Kartu & Elemen Lainnya */
@@ -138,14 +138,11 @@ st.markdown("""
     }
 
     .inventory-card {
-        border: 1px solid #333 !important; 
         padding: 20px; 
-        border-radius: 8px; 
-        margin-bottom: 15px; 
         display: flex; 
         justify-content: space-between; 
         align-items: center; 
-        background: rgba(25, 25, 25, 0.6) !important; 
+        background: rgba(25, 25, 25, 0.7) !important; 
         backdrop-filter: blur(10px);
     }
     .card-left { flex: 1; padding-right: 15px; }
@@ -339,25 +336,26 @@ if st.button("Calculate", use_container_width=True):
             
         pesan = urllib.parse.quote(f"Halo, saya ingin membuat Request Material (PO) untuk bahan *{k['nama']}*. Kebutuhan produksi: *{round(total_kg_req, 2)} kg*. Mohon konfirmasi ketersediaan.")
         
+        # FIX: Tambahan margin-bottom, shadow tebal, dan border-radius biar benar-benar misah dan estetik
         kain_cards += f"""
-        <div class="inventory-card">
+        <div class="inventory-card" style="margin-bottom: 24px !important; border: 1px solid #444 !important; border-radius: 12px; box-shadow: 0 6px 15px rgba(0,0,0,0.5);">
             <div class="card-left">
-                <div style="font-weight:700; color:#FFFFFF; font-size: 1rem; letter-spacing: 0.5px; text-transform: uppercase;">{k['nama']}</div>
-                <div style="color:#AAAAAA; font-size:0.8rem; margin-top: 8px;">
-                    Available Volume: <strong style="color:{stok_color}; margin-left:3px; font-size:0.9rem;">{k['stok_kg']:.2f} kg</strong>
+                <div style="font-weight:800; color:#FFFFFF; font-size: 1.1rem; letter-spacing: 0.5px; text-transform: uppercase;">{k['nama']}</div>
+                <div style="color:#AAAAAA; font-size:0.85rem; margin-top: 8px;">
+                    Available Volume: <strong style="color:{stok_color}; margin-left:3px; font-size:0.95rem;">{k['stok_kg']:.2f} kg</strong>
                     <span class="status-badge" style="background:{badge_bg}; color:{stok_color}; border: 1px solid {stok_color};">
                         {stok_status}
                     </span>
                 </div>
-                <div style="color:#777; font-size:0.75rem; margin-top:6px; font-style:italic;">{k['karakter']}</div>
+                <div style="color:#888; font-size:0.8rem; margin-top:8px; font-style:italic;">{k['karakter']}</div>
             </div>
             <div class="card-right">
-                <div style="color:#888; font-size:0.7rem; text-transform:uppercase; margin-bottom:4px;">Estimated Cost</div>
-                <div style="color:#FFFFFF; font-weight:600; font-size: 1.25rem; letter-spacing: -0.5px;">Rp {int(biaya):,}</div>
+                <div style="color:#888; font-size:0.75rem; text-transform:uppercase; margin-bottom:6px;">Estimated Cost</div>
+                <div style="color:#FFFFFF; font-weight:700; font-size: 1.35rem; letter-spacing: -0.5px;">Rp {int(biaya):,}</div>
                 <a href="https://wa.me/6285318543702?text={pesan}" target="_blank" class="wa-link">
                     <div class="wa-btn">Request Material</div>
                 </a>
             </div>
         </div>
         """
-    st.markdown(f'<div class="solid-card" style="background:transparent; border:none; padding:0;"><h4 class="card-header" style="margin-bottom:25px;">Inventory & Procurement Analysis</h4>{kain_cards}</div>'.replace('\n', ''), unsafe_allow_html=True)
+    st.markdown(f'<div class="solid-card" style="background:transparent; border:none; padding:0;"><h4 class="card-header" style="margin-bottom:30px; border-bottom: 2px solid #333; padding-bottom:15px;">Inventory & Procurement Analysis</h4>{kain_cards}</div>'.replace('\n', ''), unsafe_allow_html=True)
