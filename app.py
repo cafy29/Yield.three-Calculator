@@ -14,8 +14,27 @@ st.markdown("""
 header {visibility: hidden !important;}
 [data-testid="stToolbar"] {visibility: hidden !important;}
 
+    /* 1. Base Theme dengan Gambar Kain + Kaca Film Gelap */
     [data-testid="stAppViewContainer"] {
-        background-color: #0E0E0E !important;
+        background-image: linear-gradient(rgba(14, 14, 14, 0.88), rgba(14, 14, 14, 0.95)), url('https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?q=80&w=1000&auto=format&fit=crop') !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-attachment: fixed !important;
+    }
+    
+    /* 2. Tambahan Text-Shadow Biar Tulisan Nyala dan Gak Tenggelam */
+    h1, h2, h3, h4, h5, h6, label, p, span {
+        color: #E0E0E0 !important;
+        font-family: 'Inter', sans-serif !important;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.8) !important; 
+    }
+
+    .brand-title {
+        font-family: 'Montserrat', sans-serif !important;
+        font-size: 2.8rem; font-weight: 800; color: #FFFFFF !important;
+        margin-bottom: 5px; letter-spacing: -1px; text-transform: uppercase;
+        text-shadow: 2px 2px 5px rgba(0,0,0,0.9) !important; /* Bayangan ekstra buat judul utama */
+    }
     }
     h1, h2, h3, h4, h5, h6, label, p, div, span, .st-emotion-cache-10trblm {
         color: #E0E0E0 !important;
