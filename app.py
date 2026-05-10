@@ -10,7 +10,9 @@ st.set_page_config(page_title="Yield Textile Calculator", layout="wide")
 # -- CUSTOM CSS (PREMIUM INDUSTRIAL DARK) --
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@800&display=swap');/* Sembunyikan Header dan Menu Default Streamlit */
+header {visibility: hidden !important;}
+[data-testid="stToolbar"] {visibility: hidden !important;}
 
     [data-testid="stAppViewContainer"] {
         background-color: #0E0E0E !important;
@@ -141,7 +143,7 @@ model = LinearRegression().fit(pd.DataFrame(data_ml)[['Tinggi_cm', 'Berat_kg', '
 st.markdown("""
 <div style="margin-top: 1rem; margin-bottom: 2.5rem;">
     <div class="brand-title">Yield Textile Calculator</div>
-    <div class="brand-subtitle">Professional production & inventory management tool.</div>
+    <div class="brand-subtitle">Sistem cerdas untuk mengestimasi kebutuhan kain, efisiensi pemotongan, dan costing produksi garmen secara presisi.</div>
 </div>
 """, unsafe_allow_html=True)
 
