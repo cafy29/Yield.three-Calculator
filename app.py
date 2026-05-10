@@ -7,25 +7,29 @@ from sklearn.linear_model import LinearRegression
 # -- SETTINGS --
 st.set_page_config(page_title="Yield Textile Calculator", layout="wide")
 
-# -- CUSTOM CSS (PREMIUM INDUSTRIAL DARK + RESPONSIVE) --
+# -- CUSTOM CSS (PREMIUM INDUSTRIAL DARK + RESPONSIVE + ANTI-BUG MODE) --
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@800&display=swap');
 
-    /* Sembunyikan Header dan Menu Default Streamlit */
+    /* 1. Sembunyikan Semua Elemen Bawaan Streamlit */
     header {visibility: hidden !important;}
     [data-testid="stToolbar"] {visibility: hidden !important;}
+    footer {visibility: hidden !important;}
+    .stDeployButton {display: none !important;}
+    #MainMenu {visibility: hidden !important;}
 
-    /* Base Theme */
-    [data-testid="stAppViewContainer"] {
+    /* 2. Kunci Mati Background ke Dark Mode (Anti-Bug Mode Terang) */
+    .stApp, [data-testid="stAppViewContainer"] {
+        background-color: #0E0E0E !important;
         background-image: linear-gradient(rgba(14, 14, 14, 0.88), rgba(14, 14, 14, 0.95)), url('https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?q=80&w=1000&auto=format&fit=crop') !important;
         background-size: cover !important;
         background-position: center !important;
         background-attachment: fixed !important;
     }
     
-    /* Text Shadow */
-    h1, h2, h3, h4, h5, h6, label, p, span, .st-emotion-cache-10trblm {
+    /* 3. Kunci Mati Warna Teks (Anti-Tenggelam) */
+    h1, h2, h3, h4, h5, h6, label, p, span, div, .st-emotion-cache-10trblm {
         color: #E0E0E0 !important;
         font-family: 'Inter', sans-serif !important;
         text-shadow: 1px 1px 3px rgba(0,0,0,0.8) !important; 
@@ -40,19 +44,30 @@ st.markdown("""
     
     .brand-subtitle { color: #888888 !important; font-size: 0.9rem; margin-bottom: 30px; }
 
+    /* 4. Kunci Mati Kotak Input & Dropdown */
+    div[data-baseweb="input"] > div, div[data-baseweb="select"] > div { 
+        background-color: #1A1A1A !important; 
+        border: 1px solid #444444 !important;
+    }
+    input, .stSelectbox div {
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important; 
+    }
+
+    /* 5. Desain Kartu & Elemen Lainnya */
     .solid-card {
-        background-color: #1A1A1A; border: 1px solid #333333; border-radius: 6px;
+        background-color: #1A1A1A !important; border: 1px solid #333333 !important; border-radius: 6px;
         padding: 24px; margin-bottom: 20px;
     }
     .card-header {
-        font-size: 1.1rem; font-weight: 600; border-bottom: 1px solid #333333;
+        font-size: 1.1rem; font-weight: 600; border-bottom: 1px solid #333333 !important;
         padding-bottom: 12px; margin-bottom: 20px; color: #FFFFFF !important;
     }
     .metric-value { font-size: 1.8rem; font-weight: 600; color: #FFFFFF !important; }
     .metric-label { font-size: 0.8rem; color: #888888 !important; text-transform: uppercase; margin-bottom: 4px; }
     
     .info-box {
-        background-color: #222222; border-left: 3px solid #D92D20; padding: 16px;
+        background-color: #222222 !important; border-left: 3px solid #D92D20 !important; padding: 16px;
         border-radius: 4px; font-size: 0.95rem; margin-top: 20px;
     }
     
@@ -62,13 +77,9 @@ st.markdown("""
     }
     
     .custom-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-    .custom-table th { background-color: #222222; color: #A0A0A0; padding: 10px; text-align: left; border-bottom: 1px solid #444444; }
-    .custom-table td { padding: 10px; border-bottom: 1px solid #333333; }
+    .custom-table th { background-color: #222222 !important; color: #A0A0A0 !important; padding: 10px; text-align: left; border-bottom: 1px solid #444444 !important; }
+    .custom-table td { padding: 10px; border-bottom: 1px solid #333333 !important; color: #E0E0E0 !important; }
 
-    div[data-baseweb="input"], [data-baseweb="select"] { 
-        background-color: #1A1A1A !important; border: 1px solid #444444 !important;
-    }
-    
     .wa-link { text-decoration: none !important; display: block; width: 100%; }
     
     .wa-btn {
@@ -103,22 +114,20 @@ st.markdown("""
         vertical-align: middle;
     }
 
-    /* KELAS KHUSUS INVENTORY CARD */
     .inventory-card {
-        border: 1px solid #333; 
+        border: 1px solid #333 !important; 
         padding: 20px; 
         border-radius: 8px; 
         margin-bottom: 15px; 
         display: flex; 
         justify-content: space-between; 
         align-items: center; 
-        background: rgba(25, 25, 25, 0.6); 
+        background: rgba(25, 25, 25, 0.6) !important; 
         backdrop-filter: blur(10px);
     }
     .card-left { flex: 1; padding-right: 15px; }
     .card-right { text-align: right; min-width: 130px; }
 
-    /* RESPONSIVE UNTUK HP */
     @media (max-width: 768px) {
         .brand-title { font-size: 2rem; }
         .inventory-card {
@@ -132,7 +141,7 @@ st.markdown("""
             width: 100%; 
             margin-top: 15px; 
             padding-top: 15px; 
-            border-top: 1px solid #444; 
+            border-top: 1px solid #444 !important; 
         }
         .wa-btn { width: 100%; padding: 12px; margin-top: 12px; }
     }
@@ -288,7 +297,9 @@ if st.button("Calculate", use_container_width=True):
             adj = [u + offsets["h"] if "Panjang" in kolom else u + offsets["w"] for u in ukuran_list]
             size_data[kolom] = adj
         table_html = pd.DataFrame(size_data).to_html(index=False, classes="custom-table")
-        st.markdown(f'<div class="solid-card" style="padding:0; overflow:hidden;"><div style="padding:24px 24px 10px 24px;"><h4 class="card-header" style="border:none;">Size Chart Reference</h4></div>{table_html}</div>'.replace('\n', ''), unsafe_allow_html=True)
+        
+        # INI BAGIAN YANG DITAMBAH OVERFLOW-X: AUTO
+        st.markdown(f'<div class="solid-card" style="padding:0; overflow:hidden;"><div style="padding:24px 24px 10px 24px;"><h4 class="card-header" style="border:none;">Size Chart Reference</h4></div><div style="overflow-x:auto;">{table_html}</div></div>'.replace('\n', ''), unsafe_allow_html=True)
 
     kain_cards = ""
     for k in DB_AKTIF[jenis]["rekomendasi_kain"]:
